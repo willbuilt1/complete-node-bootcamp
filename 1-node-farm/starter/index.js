@@ -33,8 +33,20 @@ const fs = require('fs');
 //SERVER
 
 const http = require('http');
+// const url = require('url');
 const server = http.createServer((req, res)=>{
-    res.end('Server response');
+    const pathName = req.url;
+
+    if (pathName === '/' || pathName === '/overview'){
+        res.end('This is the overview')
+    } else if(pathName === '/product'){
+        res.end('This is the product')
+    } else {
+        res.writeHead(404, {
+            'Content-type': 'text/html'
+        });
+        res.end('<h2>Page not found</h2>')
+    }
 });
 
 server.listen(8000, '127.0.0.1', () =>{
