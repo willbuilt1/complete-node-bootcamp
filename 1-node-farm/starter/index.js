@@ -32,6 +32,10 @@ const fs = require('fs');
 
 //SERVER
 
+//sync method this does not block other lines as only executed once on load
+const data =  fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8')
+const productData = JSON.parse(data);
+
 const http = require('http');
 // const url = require('url');
 const server = http.createServer((req, res)=>{
@@ -41,6 +45,16 @@ const server = http.createServer((req, res)=>{
         res.end('This is the overview')
     } else if(pathName === '/product'){
         res.end('This is the product')
+    } else if(pathName === '/api'){
+        //async method
+    
+        // fs.readFile(`${__dirname}/dev-data/data.json`, 'utf-8', (err, data) =>{
+        //     const productData = JSON.parse(data);
+            res.writeHead(200, {
+                'content-type':'application/json'
+            })
+            res.end(data);
+        // })
     } else {
         res.writeHead(404, {
             'Content-type': 'text/html'
