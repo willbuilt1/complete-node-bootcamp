@@ -43,7 +43,7 @@ const replaceTemplate = (template, product) =>{
     output = output.replace(/{%DESCRIPTION%}/g, product.description);
     output = output.replace(/{%ID%}/g, product.id);
     //if boolean is fase then it replaces placeholder with class 'not-organic'
-    if (!product.organic) output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
+    if (!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
     return output;
 }
 
@@ -55,11 +55,14 @@ const data =  fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8')
 const dataObj = JSON.parse(data);
 
 const http = require('http');
-// const url = require('url');
+const url = require('url');
 const server = http.createServer((req, res)=>{
-    const pathName = req.url;
+    //console.log(url.parse(req.url, true));
+    const {query, pathname} = url.parse(req.url, true)
+
+
 //Overview page
-    if (pathName === '/' || pathName === '/overview'){
+    if (pathname === '/' || pathname === '/overview'){
         res.writeHead(200, {
             'content-type':'text/html'
         })
@@ -67,10 +70,15 @@ const server = http.createServer((req, res)=>{
         const output = tempOverview.replace('{%PRODUCT_CARDS%}', cardsHtml)
         res.end(output);
 //Product page
-    } else if(pathName === '/product'){
-        res.end('This is the product')
+    } else if(pathname === '/product'){
+        res.writeHead(200, {
+            'content-type':'text/html'
+        })
+        const product = dataObj[query.id];
+        const output = replaceTemplate(tempProduct, product);
+        res.end(output);
 //API      
-    } else if(pathName === '/api'){
+    } else if(pathname === '/api'){
         //async method
     
         // fs.readFile(`${__dirname}/dev-data/data.json`, 'utf-8', (err, data) =>{
