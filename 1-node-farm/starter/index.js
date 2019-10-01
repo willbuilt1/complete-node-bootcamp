@@ -33,21 +33,10 @@ const fs = require('fs');
 //SERVER
 
 //funtion that takes the template and the array object. Then replaces the {%placeholder%} with the relevant piece of data 
-const replaceTemplate = (template, product) =>{
-    //Template provided is a string so has replace method
-    //REGEX used so that it replaces every instance of requested string
-    let output = template.replace(/{%PRODUCTNAME%}/g, product.productName);
-    output = output.replace(/{%QUANTITY%}/g, product.quantity);
-    output = output.replace(/{%IMAGE%}/g, product.image);
-    output = output.replace(/{%PRICE%}/g, product.price);
-    output = output.replace(/{%NUTRI%}/g, product.nutrients);
-    output = output.replace(/{%ORIGIN%}/g, product.from);
-    output = output.replace(/{%DESCRIPTION%}/g, product.description);
-    output = output.replace(/{%ID%}/g, product.id);
-    //if boolean is fase then it replaces placeholder with class 'not-organic'
-    if (!product.organic) output = output.replace(/{%NOT_ORGANIC%}/g, 'not-organic');
-    return output;
-}
+const http = require('http');
+const url = require('url');
+const slugify = require('slugify');
+const replaceTemplate = require('./modules/replaceTemplate')
 
 //sync method this does not block other lines as only executed once on load
 //returns file as a string
@@ -59,8 +48,8 @@ const tempCard=  fs.readFileSync(`${__dirname}/templates/card.html`, 'utf-8');
 const data =  fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8')
 const dataObj = JSON.parse(data);
 
-const http = require('http');
-const url = require('url');
+const slugs = dataObj.map(el => slugify(el.productName, {lower:true}));
+console.log(slugs);
 const server = http.createServer((req, res)=>{
     // Destructures returned object and creates consts query and pathname with values equal from the object
     const {query, pathname} = url.parse(req.url, true)
