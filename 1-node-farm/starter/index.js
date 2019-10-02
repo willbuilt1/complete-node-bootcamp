@@ -49,12 +49,12 @@ const data =  fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8')
 const dataObj = JSON.parse(data);
 
 const slugs = dataObj.map(el => slugify(el.productName, {lower:true}));
-console.log(slugs);
+dataObj.forEach((el, i) => el['slug'] = slugs[i]);
 const server = http.createServer((req, res)=>{
     // Destructures returned object and creates consts query and pathname with values equal from the object
     const {query, pathname} = url.parse(req.url, true)
 
-
+    console.log(url.parse(req.url, true));
 //Overview page
     if (pathname === '/' || pathname === '/overview'){
         //gives response code of 200 which is a success and says that html will be output
@@ -72,8 +72,9 @@ const server = http.createServer((req, res)=>{
         res.writeHead(200, {
             'content-type':'text/html'
         })
+        const id = dataObj.findIndex(el => el.slug === query.id);
         //gets item that has been clicked on 
-        const product = dataObj[query.id];
+        const product = dataObj[id];
         //uses this to put data into product card
         const output = replaceTemplate(tempProduct, product);
         res.end(output);
