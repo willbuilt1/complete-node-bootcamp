@@ -1,5 +1,6 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 
 const app = express();
 
@@ -13,6 +14,7 @@ const timeRequested = (req, res, next) => {
 //Using middleware
 // app.use(myConfirm);
 app.use(express.json());
+app.use(morgan('dev'))
 app.use(timeRequested)
 
 //Reading data from JSON file - READ 
