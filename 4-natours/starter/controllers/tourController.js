@@ -46,7 +46,7 @@ exports.createTour = (req, res) => {
     }, req.body)
 
     tours.push(newTour);
-    fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
+    fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
         res.status(201).json({
             status: 'success',
             data: {
@@ -57,6 +57,16 @@ exports.createTour = (req, res) => {
             console.log(err);
         }
     })
+}
+
+exports.checkBody = (req, res, next) => {
+    if (!req.body.name || !req.body.price) {
+        res.status(400).json({
+            status: "Creation Faled",
+            message: "No body or name"
+        })
+    }
+    next();
 }
 
 exports.updateTour = (req, res) => {
